@@ -1,0 +1,191 @@
+---
+layout: default
+title: Project Cost Estimator
+---
+
+<div class="stu-estimator-container">
+  <div class="stu-estimator-card">
+    <h2 class="stu-title">Project Cost Estimator</h2>
+    <p class="stu-subtitle">Configure your project options below to view a live estimate.</p>
+    
+    <!-- Rate Tier Selector -->
+    <div class="stu-form-group">
+      <label class="stu-label" for="rateTier">Your Rate Category</label>
+      <select id="rateTier" class="stu-select" onchange="calculateProjectCost()">
+        <option value="internal">Internal (Institutional / Academic Rate)</option>
+        <option value="external">External / Industry Rate</option>
+      </select>
+    </div>
+
+    <!-- Service 1 -->
+    <div class="stu-service-row">
+      <div class="stu-service-info">
+        <label class="stu-checkbox-label">
+          <input type="checkbox" id="service1" onchange="toggleServiceInputs(); calculateProjectCost();">
+          <span class="stu-service-title">Single-Cell RNA Sequencing</span>
+        </label>
+        <p class="stu-service-desc">Droplet-based whole-transcriptome sequencing per sample.</p>
+      </div>
+      <div class="stu-service-qty" id="qtyWrapper1" style="display: none;">
+        <label class="stu-qty-label" for="qty1">Samples</label>
+        <input type="number" id="qty1" class="stu-input-qty" value="1" min="1" oninput="calculateProjectCost()">
+      </div>
+    </div>
+
+    <!-- Service 2 -->
+    <div class="stu-service-row">
+      <div class="stu-service-info">
+        <label class="stu-checkbox-label">
+          <input type="checkbox" id="service2" onchange="toggleServiceInputs(); calculateProjectCost();">
+          <span class="stu-service-title">Spatial Tissue Profiling</span>
+        </label>
+        <p class="stu-service-desc">High-resolution sub-cellular spatial transcriptomics panel.</p>
+      </div>
+      <div class="stu-service-qty" id="qtyWrapper2" style="display: none;">
+        <label class="stu-qty-label" for="qty2">Slides</label>
+        <input type="number" id="qty2" class="stu-input-qty" value="1" min="1" oninput="calculateProjectCost()">
+      </div>
+    </div>
+
+    <!-- Totals Display Area -->
+    <div class="stu-total-section">
+      <div class="stu-total-row">
+        <span>Estimated Total:</span>
+        <span class="stu-total-price" id="displayTotal">$0.00</span>
+      </div>
+      <p class="stu-disclaimer">*This is a preliminary estimation. Final costs are subject to a scoping consultation.</p>
+    </div>
+  </div>
+</div>
+
+<style>
+.stu-estimator-container {
+  margin: 30px 0;
+  display: flex;
+  justify-content: center;
+}
+.stu-estimator-card {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+.stu-title {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a202c;
+}
+.stu-subtitle {
+  margin: 0 0 24px 0;
+  font-size: 14px;
+  color: #718096;
+}
+.stu-form-group {
+  margin-bottom: 24px;
+}
+.stu-label {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #4a5568;
+}
+.stu-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 15px;
+}
+.stu-service-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-top: 1px solid #edf2f7;
+  padding: 16px 0;
+}
+.stu-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.stu-service-desc {
+  margin: 4px 0 0 24px;
+  font-size: 13px;
+  color: #718096;
+}
+.stu-service-qty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.stu-qty-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #a0aec0;
+  font-weight: 700;
+}
+.stu-input-qty {
+  width: 70px;
+  padding: 6px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  text-align: center;
+}
+.stu-total-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #e2e8f0;
+}
+.stu-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+}
+.stu-total-price {
+  font-size: 28px;
+  color: #2b6cb0;
+}
+.stu-disclaimer {
+  margin: 12px 0 0 0;
+  font-size: 11px;
+  color: #a0aec0;
+}
+</style>
+
+<script>
+const pricingMatrix = {
+  service1: { internal: 150, external: 300 },
+  service2: { internal: 450, external: 850 }
+};
+
+function toggleServiceInputs() {
+  const s1Checked = document.getElementById('service1').checked;
+  const s2Checked = document.getElementById('service2').checked;
+  document.getElementById('qtyWrapper1').style.display = s1Checked ? 'flex' : 'none';
+  document.getElementById('qtyWrapper2').style.display = s2Checked ? 'flex' : 'none';
+}
+
+function calculateProjectCost() {
+  const tier = document.getElementById('rateTier').value;
+  let total = 0;
+  if (document.getElementById('service1').checked) {
+    const qty1 = parseInt(document.getElementById('qty1').value) || 1;
+    total += pricingMatrix.service1[tier] * qty1;
+  }
+  if (document.getElementById('service2').checked) {
+    const qty2 = parseInt(document.getElementById('qty2').value) || 1;
+    total += pricingMatrix.service2[tier] * qty2;
+  }
+  document.getElementById('displayTotal').innerText = '$' + total.toLocaleString(undefined, {
+    minimumFractionDigits: 2, maximumFractionDigits: 2
+  });
+}
+</script>
