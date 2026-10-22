@@ -1,6 +1,7 @@
 <!-- GLOBAL LAB NAVIGATION HEADER -->
 <div class="lab-navbar">
-  <div class="lab-nav-brand"><a href="index.html">Nancy's Lab</a></div>
+ <div class="lab-nav-brand"><a href="./">Nancy's Lab</a></div>
+
   <div class="lab-nav-links">
     <a href="about.html">About Us</a>
     <a href="publications.html">Publications</a>
